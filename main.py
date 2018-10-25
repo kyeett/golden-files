@@ -1,6 +1,7 @@
 import os
 import json
 import logging 
+from jinja2 import Template
 from pprint import pprint
 
 def load_json_test_file(filename):
@@ -30,6 +31,16 @@ def transform_hw_data_1(hw_data):
         hw_data_new.append(d)
     return hw_data_new
 
+
+def prettify_transformed_data(transformed_data):
+    template = Template("""{% for result in data %}
+INFORMATION
+\tID:\t\t{{ result['id'] }}
+\tName:\t\t{{ result['last_name'] }}, {{ result['first_name'] }}
+\tLocation:\t{{ result['location'] }}
+{% endfor %}""")
+    return template.render(data=transformed_data)
+
 try:
     hw_data = load_json_test_file('testdata/hardware.golden')
 except IOError as e:
@@ -37,5 +48,7 @@ except IOError as e:
     exit(1)
      
 transformed_data = transform_hw_data_1(hw_data)
-pprint(transformed_data)
-save_json_test_file('testdata/transformed.golden', transformed_data)
+
+pretty_data = prettify_transformed_data(transformed_data)
+print(pretty_data)
+save_test_file('testdata/pretty.golden', pretty_data)
