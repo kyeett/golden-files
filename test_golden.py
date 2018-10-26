@@ -1,5 +1,3 @@
-
-
 import main
 import pytest
 
@@ -11,7 +9,7 @@ def test_transform_data():
 
 def test_out_text():
     parsed_data = main.load_json_test_file('testdata/parsed.golden')
-    out_text = main.to_output_text(parsed_data)
+    out_text = main.output_format_text(parsed_data)
     assert out_text == main.load_test_file('testdata/out_text.golden')
 
 def test_out_json():

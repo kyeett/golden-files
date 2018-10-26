@@ -3,6 +3,8 @@ import json
 import logging 
 from jinja2 import Template
 from pprint import pprint
+import argparse
+
 
 def load_json_test_file(filename):
     with open(filename) as f:
@@ -41,8 +43,12 @@ INFORMATION
 {% endfor %}""")
     return template.render(data=parsed_data)
 
+
+
 def main():
-    update_golden_files = True
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--update',   help='update .golden files', action='store_true')
+    args = parser.parse_args()
 
     try:
         in_data = load_json_test_file('testdata/hardware.golden')
@@ -50,11 +56,19 @@ def main():
         logging.error(e)
         exit(1)
 
+    # Parse output from hardware
     parsed_data = parse_hw_data(in_data)
+
+    # Prepare output formats
     out_text = output_format_text(parsed_data)
     out_json = output_format_json(parsed_data)
-    
-    if update_golden_files:
-        save_test_file('testdata/parsed.golden', parsed_data)
+
+    # Update golden files 
+    if args.update:
+        print("updating golden files")
+        save_test_file('testdata/parsed.golden', output_format_json(parsed_data))
         save_test_file('testdata/out_text.golden', out_text)
         save_test_file('testdata/out_json.golden', out_json)
+
+if __name__ == '__main__':
+    main()
