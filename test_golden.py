@@ -6,11 +6,11 @@ import pytest
 
 def test_transform_data():
     hw_data = main.load_json_test_file('testdata/hardware.golden')
-    transformed_data = main.transform_hw_data_1(hw_data)
-    assert transformed_data == main.load_json_test_file('testdata/transformed.golden')
+    parsed_data = main.parse_hw_data(hw_data)
+    assert parsed_data == main.load_json_test_file('testdata/parsed.golden')
 
 
-def test_pretty_data():
-    transformed_data = main.load_json_test_file('testdata/transformed.golden')
-    pretty_data = main.prettify_transformed_data(transformed_data)
-    assert pretty_data == main.load_test_file('testdata/pretty.golden')
+def test_out_text():
+    parsed_data = main.load_json_test_file('testdata/parsed.golden')
+    out_text = main.prettify_parsed_data(parsed_data)
+    assert out_text == main.load_test_file('testdata/out_text.golden')
