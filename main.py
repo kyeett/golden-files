@@ -16,8 +16,6 @@ def save_test_file(filename, content):
     with open(filename, "w+") as f:
         f.write(content)
 
-def save_json_test_file(filename, obj):
-    save_test_file(filename, json.dumps(obj, indent=4))
 
 # Changes id to 0-index and turns last name to uppercase
 def parse_hw_data(hw_data):
@@ -31,8 +29,10 @@ def parse_hw_data(hw_data):
         hw_data_new.append(d)
     return hw_data_new
 
+def output_format_json(obj):
+    return json.dumps(obj, indent=4)
 
-def prettify_parsed_data(parsed_data):
+def output_format_text(parsed_data):
     template = Template("""{% for result in data %}
 INFORMATION
 \tID:\t\t{{ result['id'] }}
@@ -41,8 +41,9 @@ INFORMATION
 {% endfor %}""")
     return template.render(data=parsed_data)
 
-
 def main():
+    update_golden_files = True
+
     try:
         in_data = load_json_test_file('testdata/hardware.golden')
     except IOError as e:
@@ -50,10 +51,10 @@ def main():
         exit(1)
 
     parsed_data = parse_hw_data(in_data)
-
-
-
-    out_text = prettify_parsed_data(parsed_data)
-
-    save_test_file('testdata/out_text.golden', prettify_parsed_data(out_text))
-    save_json_test_file('testdata/out_json.golden', parsed_data)
+    out_text = output_format_text(parsed_data)
+    out_json = output_format_json(parsed_data)
+    
+    if update_golden_files:
+        save_test_file('testdata/parsed.golden', parsed_data)
+        save_test_file('testdata/out_text.golden', out_text)
+        save_test_file('testdata/out_json.golden', out_json)
